@@ -88,6 +88,14 @@ loomerto --plan <plan 数据文件> <子命令> …          # 只认这一份�
 （default = `~/.hermes/workspace/plans`，其余 profile = `~/.hermes/profiles/<名字>/workspace/plans`）；
 在 plan 自己的目录里跑（那里有 `plan.json`）可以省掉旗标。
 
+**项目开发时，plan 必须持久化在项目里**（用户 2026-10-11 硬要求，原话「在项目开发时，loomerto 计划必须
+持久化存储到项目中」）：只要这份计划服务的是**某个项目/仓库的开发**，plan 就住在那个项目里，而不是 profile 的
+`workspace/plans` —— `loomerto --plans-root <项目>/plans …` 建出 `<项目>/plans/<slug>/`，并随项目一起提交推送
+（`git add plans/`）。判据：那个提交的 `git show --stat` 里能看到 `plans/<slug>/plan.json` 与 `plan.html`；
+给这个用户的看板 URL 也就顺着变成 `file://<项目>/plans/<slug>/plan.html`。
+项目还不存在时先把它建出来（`mkdir -p <项目>/plans && git init`）再建 plan —— 计划是项目的第一件产物，
+不是等脚手架齐了才补的记录。profile 的 `workspace/plans` 留给「不属于任何项目」的协作计划。
+
 **实现在仓库根的 loomerto 包里**（纯 stdlib、零依赖）：model（模型与派生规则，纯函数）/ store（磁盘 +
 **唯一写入漏斗** `commit()`）/ render（三视图）/ workers（线程探活）/ cli（唯一 print 与退出码）。
 这个 skill 自带的 `scripts/plan.py` 是**旧写法**的薄壳（它替你交代 plans 根再调同一个 CLI，与
