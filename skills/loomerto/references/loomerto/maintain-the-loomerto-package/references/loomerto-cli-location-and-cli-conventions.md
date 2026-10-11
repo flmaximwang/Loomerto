@@ -155,5 +155,5 @@ python3 -m py_compile <profile>/skills/<cat>/<name>/scripts/*.py
   自己的分支上**改（`git worktree list` 第三字段就是那一支）时，装着的 CLI 已经跑的是新代码（拿真命令探一次
   即可证明），此时拉平是安全的 —— 但要在 `REQUIREMENTS.md` §4 记一句「副本与新命令名绑在**哪一支**上」，
   否则下一个人把主 checkout 切回 main，profile 副本就变成空头支票。
-- 薄壳（`scripts/plan.py`）里「调用方自己给过就不补旗标」的判断要跟着新旗标改（判 `--plan` 与 `--plans-root`），
+- 薄壳（`skills/loomerto/references/loomerto/loomerto-plan/scripts/plan.py`）里「调用方自己给过就不补旗标」的判断要跟着新旗标改（判 `--plan` 与 `--plans-root`），
   否则薄壳会补一个多余旗标、包里多打一行「两个都给了」的警告。

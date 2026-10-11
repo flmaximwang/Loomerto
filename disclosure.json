@@ -1,0 +1,393 @@
+{
+ "broken": [
+  [
+   "skills/loomerto/references/loomerto/maintain-the-loomerto-package/SKILL.md",
+   "scripts/plan.py",
+   93
+  ],
+  [
+   "skills/loomerto/references/loomerto/maintain-the-loomerto-package/references/loomerto-cli-location-and-cli-conventions.md",
+   "scripts/plan.py",
+   158
+  ]
+ ],
+ "edges": {
+  "skills/loomerto/SKILL.md": {
+   "skills/loomerto/references/loomerto/INDEX.md": 10
+  },
+  "skills/loomerto/references/loomerto/INDEX.md": {
+   "skills/loomerto/references/loomerto/loomerto-check-commands/SKILL.md": 4,
+   "skills/loomerto/references/loomerto/loomerto-check-temps/SKILL.md": 6,
+   "skills/loomerto/references/loomerto/loomerto-intake/SKILL.md": 8,
+   "skills/loomerto/references/loomerto/loomerto-plan/SKILL.md": 10,
+   "skills/loomerto/references/loomerto/loomerto-remind/SKILL.md": 12,
+   "skills/loomerto/references/loomerto/maintain-the-loomerto-package/SKILL.md": 14
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-commands/SKILL.md": {
+   "skills/loomerto/references/loomerto/loomerto-check-commands/scripts/check_plan_node_commands.py": 124
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-commands/test-results.md": {
+   "blind-tests/r1/judge-input-r1.txt": 4
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-temps/SKILL.md": {
+   "skills/loomerto/references/loomerto/loomerto-check-temps/scripts/check_plan_temp_hygiene.py": 118
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-temps/test-results.md": {
+   "blind-tests/r1/judge-input-r1.txt": 4
+  },
+  "skills/loomerto/references/loomerto/loomerto-intake/SKILL.md": {
+   "skills/loomerto/references/loomerto/loomerto-intake/references/read-only-evidence-recipes.md": 98
+  },
+  "skills/loomerto/references/loomerto/loomerto-plan/SKILL.md": {
+   "docs/canvas-sync.md": 407,
+   "skills/loomerto/references/loomerto/loomerto-plan/SKILL.md": 428,
+   "skills/loomerto/references/loomerto/loomerto-plan/scripts/plan.py": 101
+  },
+  "skills/loomerto/references/loomerto/maintain-the-loomerto-package/SKILL.md": {
+   "docs/architecture.md": 89,
+   "docs/canvas-sync.md": 128,
+   "docs/cli-reference.md": 88,
+   "loomerto/cli.py": 176,
+   "skills/loomerto/references/loomerto/maintain-the-loomerto-package/SKILL.md": 93,
+   "skills/loomerto/references/loomerto/maintain-the-loomerto-package/references/loomerto-cli-location-and-cli-conventions.md": 80,
+   "skills/loomerto/references/loomerto/maintain-the-loomerto-package/references/object-definition-and-operation-map.md": 175
+  }
+ },
+ "external": [
+  [
+   "skills/loomerto/references/loomerto/loomerto-check-temps/SKILL.md",
+   "tmp/quarantine_move.sh",
+   108
+  ]
+ ],
+ "levels": {
+  "1": [
+   "skills/loomerto/SKILL.md"
+  ],
+  "2": [
+   "skills/loomerto/references/loomerto/INDEX.md"
+  ],
+  "3": [
+   "skills/loomerto/references/loomerto/loomerto-check-commands/SKILL.md",
+   "skills/loomerto/references/loomerto/loomerto-check-temps/SKILL.md",
+   "skills/loomerto/references/loomerto/loomerto-intake/SKILL.md",
+   "skills/loomerto/references/loomerto/loomerto-plan/SKILL.md",
+   "skills/loomerto/references/loomerto/loomerto-remind/SKILL.md",
+   "skills/loomerto/references/loomerto/maintain-the-loomerto-package/SKILL.md"
+  ],
+  "4": [
+   "skills/loomerto/references/loomerto/loomerto-check-commands/scripts/check_plan_node_commands.py",
+   "skills/loomerto/references/loomerto/loomerto-check-temps/scripts/check_plan_temp_hygiene.py",
+   "skills/loomerto/references/loomerto/loomerto-intake/references/read-only-evidence-recipes.md",
+   "skills/loomerto/references/loomerto/loomerto-plan/scripts/plan.py",
+   "skills/loomerto/references/loomerto/maintain-the-loomerto-package/references/loomerto-cli-location-and-cli-conventions.md",
+   "skills/loomerto/references/loomerto/maintain-the-loomerto-package/references/object-definition-and-operation-map.md"
+  ],
+  "None": [
+   "skills/loomerto/references/loomerto/loomerto-check-commands/test-prompts.json",
+   "skills/loomerto/references/loomerto/loomerto-check-commands/test-results.md",
+   "skills/loomerto/references/loomerto/loomerto-check-temps/test-prompts.json",
+   "skills/loomerto/references/loomerto/loomerto-check-temps/test-results.md"
+  ]
+ },
+ "nodes": {
+  "skills/loomerto/SKILL.md": {
+   "bytes": 692,
+   "depth": 1,
+   "desc_chars": 136,
+   "kind": "instructions",
+   "lines": 7,
+   "name": "loomerto",
+   "orphan": false,
+   "over": [],
+   "path": "skills/loomerto/SKILL.md",
+   "root": true,
+   "skill": "skills/loomerto/",
+   "tok": 204
+  },
+  "skills/loomerto/references/loomerto/INDEX.md": {
+   "bytes": 1507,
+   "depth": 2,
+   "desc_chars": null,
+   "kind": "reference",
+   "lines": null,
+   "name": "INDEX.md",
+   "orphan": false,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/INDEX.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": null
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-commands/SKILL.md": {
+   "bytes": 8304,
+   "depth": 3,
+   "desc_chars": 68,
+   "kind": "instructions",
+   "lines": 115,
+   "name": "loomerto-check-commands",
+   "orphan": false,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/loomerto-check-commands/SKILL.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": 2474
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-commands/scripts/check_plan_node_commands.py": {
+   "bytes": 22367,
+   "depth": 4,
+   "desc_chars": null,
+   "kind": "reference",
+   "lines": null,
+   "name": "check_plan_node_commands.py",
+   "orphan": false,
+   "over": [
+    "22367 B > 20000 B"
+   ],
+   "path": "skills/loomerto/references/loomerto/loomerto-check-commands/scripts/check_plan_node_commands.py",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": null
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-commands/test-prompts.json": {
+   "bytes": 2517,
+   "depth": null,
+   "desc_chars": null,
+   "kind": "reference",
+   "lines": null,
+   "name": "test-prompts.json",
+   "orphan": true,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/loomerto-check-commands/test-prompts.json",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": null
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-commands/test-results.md": {
+   "bytes": 1415,
+   "depth": null,
+   "desc_chars": null,
+   "kind": "reference",
+   "lines": null,
+   "name": "test-results.md",
+   "orphan": true,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/loomerto-check-commands/test-results.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": null
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-temps/SKILL.md": {
+   "bytes": 8434,
+   "depth": 3,
+   "desc_chars": 83,
+   "kind": "instructions",
+   "lines": 109,
+   "name": "loomerto-check-temps",
+   "orphan": false,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/loomerto-check-temps/SKILL.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": 2511
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-temps/scripts/check_plan_temp_hygiene.py": {
+   "bytes": 22401,
+   "depth": 4,
+   "desc_chars": null,
+   "kind": "reference",
+   "lines": null,
+   "name": "check_plan_temp_hygiene.py",
+   "orphan": false,
+   "over": [
+    "22401 B > 20000 B"
+   ],
+   "path": "skills/loomerto/references/loomerto/loomerto-check-temps/scripts/check_plan_temp_hygiene.py",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": null
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-temps/test-prompts.json": {
+   "bytes": 2586,
+   "depth": null,
+   "desc_chars": null,
+   "kind": "reference",
+   "lines": null,
+   "name": "test-prompts.json",
+   "orphan": true,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/loomerto-check-temps/test-prompts.json",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": null
+  },
+  "skills/loomerto/references/loomerto/loomerto-check-temps/test-results.md": {
+   "bytes": 1373,
+   "depth": null,
+   "desc_chars": null,
+   "kind": "reference",
+   "lines": null,
+   "name": "test-results.md",
+   "orphan": true,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/loomerto-check-temps/test-results.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": null
+  },
+  "skills/loomerto/references/loomerto/loomerto-intake/SKILL.md": {
+   "bytes": 6584,
+   "depth": 3,
+   "desc_chars": 58,
+   "kind": "instructions",
+   "lines": 87,
+   "name": "loomerto-intake",
+   "orphan": false,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/loomerto-intake/SKILL.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": 2048
+  },
+  "skills/loomerto/references/loomerto/loomerto-intake/references/read-only-evidence-recipes.md": {
+   "bytes": 2950,
+   "depth": 4,
+   "desc_chars": null,
+   "kind": "reference",
+   "lines": null,
+   "name": "read-only-evidence-recipes.md",
+   "orphan": false,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/loomerto-intake/references/read-only-evidence-recipes.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": null
+  },
+  "skills/loomerto/references/loomerto/loomerto-plan/SKILL.md": {
+   "bytes": 65027,
+   "depth": 3,
+   "desc_chars": 191,
+   "kind": "instructions",
+   "lines": 636,
+   "name": "loomerto-plan",
+   "orphan": false,
+   "over": [
+    "正文 19664 tok > 5000",
+    "正文 636 行 > 500"
+   ],
+   "path": "skills/loomerto/references/loomerto/loomerto-plan/SKILL.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": 19664
+  },
+  "skills/loomerto/references/loomerto/loomerto-plan/scripts/plan.py": {
+   "bytes": 3486,
+   "depth": 4,
+   "desc_chars": null,
+   "kind": "reference",
+   "lines": null,
+   "name": "plan.py",
+   "orphan": false,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/loomerto-plan/scripts/plan.py",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": null
+  },
+  "skills/loomerto/references/loomerto/loomerto-remind/SKILL.md": {
+   "bytes": 4788,
+   "depth": 3,
+   "desc_chars": 67,
+   "kind": "instructions",
+   "lines": 77,
+   "name": "loomerto-remind",
+   "orphan": false,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/loomerto-remind/SKILL.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": 1446
+  },
+  "skills/loomerto/references/loomerto/maintain-the-loomerto-package/SKILL.md": {
+   "bytes": 26719,
+   "depth": 3,
+   "desc_chars": 56,
+   "kind": "instructions",
+   "lines": 236,
+   "name": "maintain-the-loomerto-package",
+   "orphan": false,
+   "over": [
+    "正文 8036 tok > 5000"
+   ],
+   "path": "skills/loomerto/references/loomerto/maintain-the-loomerto-package/SKILL.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": 8036
+  },
+  "skills/loomerto/references/loomerto/maintain-the-loomerto-package/references/loomerto-cli-location-and-cli-conventions.md": {
+   "bytes": 12331,
+   "depth": 4,
+   "desc_chars": null,
+   "kind": "reference",
+   "lines": null,
+   "name": "loomerto-cli-location-and-cli-conventions.md",
+   "orphan": false,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/maintain-the-loomerto-package/references/loomerto-cli-location-and-cli-conventions.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": null
+  },
+  "skills/loomerto/references/loomerto/maintain-the-loomerto-package/references/object-definition-and-operation-map.md": {
+   "bytes": 5340,
+   "depth": 4,
+   "desc_chars": null,
+   "kind": "reference",
+   "lines": null,
+   "name": "object-definition-and-operation-map.md",
+   "orphan": false,
+   "over": [],
+   "path": "skills/loomerto/references/loomerto/maintain-the-loomerto-package/references/object-definition-and-operation-map.md",
+   "root": false,
+   "skill": "skills/loomerto/",
+   "tok": null
+  }
+ },
+ "orphans": [
+  "skills/loomerto/references/loomerto/loomerto-check-commands/test-prompts.json",
+  "skills/loomerto/references/loomerto/loomerto-check-commands/test-results.md",
+  "skills/loomerto/references/loomerto/loomerto-check-temps/test-prompts.json",
+  "skills/loomerto/references/loomerto/loomerto-check-temps/test-results.md"
+ ],
+ "over": [
+  [
+   "skills/loomerto/references/loomerto/loomerto-check-commands/scripts/check_plan_node_commands.py",
+   [
+    "22367 B > 20000 B"
+   ]
+  ],
+  [
+   "skills/loomerto/references/loomerto/loomerto-check-temps/scripts/check_plan_temp_hygiene.py",
+   [
+    "22401 B > 20000 B"
+   ]
+  ],
+  [
+   "skills/loomerto/references/loomerto/loomerto-plan/SKILL.md",
+   [
+    "正文 19664 tok > 5000",
+    "正文 636 行 > 500"
+   ]
+  ],
+  [
+   "skills/loomerto/references/loomerto/maintain-the-loomerto-package/SKILL.md",
+   [
+    "正文 8036 tok > 5000"
+   ]
+  ]
+ ],
+ "root_near_dup": [],
+ "roots": [
+  "skills/loomerto/SKILL.md"
+ ]
+}

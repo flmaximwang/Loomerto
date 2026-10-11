@@ -1,0 +1,4 @@
+skills/loomerto/references/loomerto/loomerto-check-commands/test-prompts.json    测试留档：题面与历史结果，刻意不被任何文档披露
+skills/loomerto/references/loomerto/loomerto-check-temps/test-prompts.json    测试留档：题面与历史结果，刻意不被任何文档披露
+skills/loomerto/references/loomerto/loomerto-check-commands/test-results.md    测试留档：题面与历史结果，刻意不被任何文档披露
+skills/loomerto/references/loomerto/loomerto-check-temps/test-results.md    测试留档：题面与历史结果，刻意不被任何文档披露
