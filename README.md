@@ -19,6 +19,7 @@
 - **包怎么分层 / 怎么接新前端（画布写回、web 服务）/ 改代码前的三道闸** → [`docs/architecture.md`](docs/architecture.md)。
 - **敲命令 / 核对 CLI 面** → [`docs/cli-reference.md`](docs/cli-reference.md)（31 个叶子命令逐条，含退出码与全局旗标）。
 - **动手改一份 plan** → [`skills/loomerto/loomerto-plan/SKILL.md`](skills/loomerto/loomerto-plan/SKILL.md)（模型 / 状态表 / 谁在做+线程 / 坑）。
+- **本轮画布改动的 spec / ticket** → [`specs/canvas-participant-picker-and-single-save.md`](specs/canvas-participant-picker-and-single-save.md)（参与方下拉 + 单一「保存」：问题 / 实测证据 / T1–T5）。
 - 本文件剩下的部分 = 仓库索引：六条 skill 各是什么、怎么装、盲测记录。
 
 ## 装什么（两条腿）

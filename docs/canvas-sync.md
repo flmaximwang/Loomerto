@@ -32,12 +32,14 @@ GET /api/plan  →  200 {"ok": true, "view": {…}}
 | `tasks[]` | 每条泳道：`id/title/status/owner/deps/note` + `blocks[]` |
 | `tasks[].blocks[]` | 每个块：`id/title/kind/status(派生)/raw_status/owner/claimed_by/claimed_at/exec/doc/done_when/deps(含任务级展开)/own_deps/review_of/feedback/artifacts/runs(最近 5 条)/rework` |
 | `edges` | `[[from, to], …]`（`edge_deps` 算出的依赖边；指向不存在的 id 由前端忽略） |
+| `participants` | `plan.json` 的 `participants` **原样透传**（兼容已有前端/别的消费者，别拿它当候选全集） |
+| `participant_options` | **参与方候选**（画布下拉用）：`participants` ∪ 计划里实际出现的块 `owner` ∪ 实际 `exec.by`，按 id 去重、顺序稳定（已注册的按 `participants` 原序在前、未注册的按 id 排序在后）。每项 `{id, label, kind, registered}`：`label` 没有就退回 `id`，`registered` = 是否登记在 `participants` 里。由 `model.participant_options` 算好 —— **前端别自己拼候选**（只取 `participants` 会让「认领人不在名单里」的计划连当前认领人都选不到）。 |
 | `block_statuses` / `task_statuses` / `kinds` | 枚举，给下拉框用（别在前端硬编码） |
 
 ## 2. 写
 
 ```
-POST /api/plan  {"op": …, "rev": "<读到的 rev>", "by": "<谁>", "note": "…", …}
+POST /api/plan  {"op": …, "rev": "<读到的 rev>", "by": "<谁在改>", "note": "…", …}
   → 200 {"ok": true, "msg": "T-002#B-001 claimed → running", "ref": "<这次动到的块的当前 id>", "view": {…(新的一屏)…}}
   → 400 {"ok": false, "error": "<中文原因>"}        参数 / 模型层说不行（状态非法、找不到块、重排清单对不上、会成环…）
   → 409 {"ok": false, "error": "这份 plan 在别处被改过了 —— 先刷新再改"}   rev 过期
@@ -46,20 +48,32 @@ POST /api/plan  {"op": …, "rev": "<读到的 rev>", "by": "<谁>", "note": "�
 `ref` 只在动了某个块时才有值（`task` op 是空串）：**跨泳道移动会换块 id**，前端要靠它把选中态
 跟到新 id 上，否则刷新完就丢了选中。
 
+> **`by` 与 `doing` 不是一回事**（别混）：
+> - `by` = **actor**：谁在改这份数据（写进 `log`/`runs` 的 `by`），默认 `"canvas"`。
+> - `doing` = **`--by`（谁在做这件活）**：只对状态写入有意义，交给 `edits.set_status(by=…)`。
+> 前端一个输入框里的「在做」对应 `doing`；「谁点的保存」是 `by`。
+
 六个 `op`：
 
 | op | 还要给 | 落到哪 |
 |---|---|---|
-| `edit` | `ref` + `title?` `doc?` `done_when?[]` `owner?` `kind?` `note?` | `edits.edit_block` —— **只改文档字段，不动状态** |
-| `status` | `ref` + `status` + 可选 `by` `note` `owner` | `edits.set_status` —— 与 `loomerto block set_status` / `task set_status` 完全同一套（runs / feedback / exec 的写法同一处） |
+| `edit` | `ref` + 可选 `title` `doc` `done_when?[]` `owner` `kind` `status` `doing` `note` | **一次保存写回字段 + 状态**：字段走 `edits.edit_block`、给了 `status`（或 `doing` 变了）再走 `edits.set_status` —— 两个都是唯一实现，成功后**一次 `store.commit()`** |
+| `status` | `ref` + `status` + 可选 `doing` `note` `owner` `done_when?[]` | `edits.set_status` —— 与 `loomerto block set_status` / `task set_status` 完全同一套（runs / feedback / exec 的写法同一处） |
 | `task` | `title` + 可选 `owner` `deps[]` | `edits.add_task` |
 | `block` | `task` + `title` + 可选 `kind` `doc` `done_when[]` `owner` `status` | `edits.add_block`（画布默认 `pending`：建块的人就是在画布上批准它的人） |
 | `reorder` | `task` + `order[]`（块 id 或块内后缀，**必须与任务里的块一一对应**）+ 可选 `ref`（拖的是哪个块） | `edits.reorder_blocks` —— 只改 list 顺序，**不碰 deps**、不换 id |
 | `move` | `ref` + `task` + 可选 `index`（0 起，不给=追加到末尾）`note` | `edits.move_block` —— 换泳道：换块 id + 重接 `deps`/`review_of`/`expanded_from.block`；**成环回 400 且什么都不写** |
 
+- **`edit` 的字段与状态一起提交时的语义**：先 `edit_block`（只改非空的字段、`done_when=[]` 表示清空判据），
+  再按目标状态决定要不要 `set_status`。**只提交真的动过的键**（前端记住初值、有变化才发）；
+  什么都没变 ⇒ 回 `"… 没有变化"`，不发无效写入。
+- **`--by` 只在目标状态收它时才发**：那张表是 `edits.BLOCK_SET_FLAGS`（在途状态才收 `--by`/线程三件套、
+  `--artifact` 只在 `done`）。给了 `doing` 而目标状态不收 ⇒ 回 400 + 一句人话（「它收 […]」），
+  **不许无脑塞**（硬塞会撞 `check_set_flags`）。
 - **`status` 只收块/任务的真状态**（`BLOCK_STATUS` / `TASK_STATUS`）；写 `ready` / `waiting`（派生）会被拒。
 - 一次请求 = 一次 `commit()`：json 落盘与三个视图（`PLAN.md` / `plan.html` / `plan.canvas`）同步完成。
-- 失败**不改任何东西**（先改内存 dict，出错直接抛，不落盘；`move` 的环检测也在落盘之前）。
+- 失败**不改任何东西**（先改内存 dict，出错直接抛，不落盘；`move` 的环检测也在落盘之前）——
+  `edit` 里字段写完、状态那步抛错，同样整请求回 400、磁盘一个字节不变。
 - `move` 的 `task` 给的就是源任务本身时 = 只改先后（等价 `reorder`，id 与接线都不动）。
 - **前端别自己演算 id**：新 id 由服务端在目标任务里取最小空位（可能是刚腾出来的老号），
   旧 id 上记着的历史（runs 的 `block=` / `folded_from`）按原样留着 —— 那是记录，不是引用。
