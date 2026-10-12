@@ -98,6 +98,11 @@
   </aside>
 </main>
 
+<!-- 参与方候选：页面级一份，编辑器的「认领人 / 在做」与新建块 / 新建任务的「认领人」四处共用。
+     放在表单模板外面 —— 以前它只长在编辑器那一屏里，新建表单渲染时编辑器被替换掉 ⇒ 引用悬空，
+     `#n_owner.list === null`、点了不弹。由 render() 每次从 VIEW.participant_options 填。 -->
+<datalist id="people"></datalist>
+
 <script>
 "use strict";
 let VIEW = null;         // 服务端算好的一屏数据（派生状态/依赖/认领都由 model 算）
@@ -155,6 +160,9 @@ function render(){
         ? `<span><i class="zebra"></i>${esc(zh(s))}</span>`
         : `<span><i style="background:var(--${s})"></i>${esc(zh(s))}</span>`).join("")
     + `<span style="opacity:.85">拖动卡片 = 改先后；拖到别的泳道 = 换任务（块 id 与依赖接线自动跟着改）</span>`;
+  // 参与方候选（服务端算好）：已注册的显示 label，只是出现过的（未登记）加个尾巴好认。value 一律是 id。
+  $("#people").innerHTML = (v.participant_options || []).map(p =>
+      `<option value="${esc(p.id)}">${esc(p.label)}${p.registered ? "" : "（未登记）"}</option>`).join("");
   const lanes = $("#lanes");
   lanes.innerHTML = "";
   for (const t of v.tasks){
@@ -296,7 +304,6 @@ function editor(){
       暂不提供：删块、删任务、直接改依赖接线 —— 走命令（<code>remove</code> / <code>bypass</code> / <code>move</code> / <code>expand</code> / <code>compress</code>）更安全。</div>`;
     return;
   }
-  const parts = VIEW.participants.map(p => `<option value="${esc(p.id)}">`).join("");
   box.innerHTML = `
     <h2>${esc(b.id)} <span class="pill ${b.status}">${esc(zh(b.status))}</span></h2>
     <p class="goal">派生状态由依赖与认领算出：<b>${esc(zh(b.status))}</b>${b.status !== b.raw_status ? `（内部 ${esc(b.raw_status)}${derivedWhy(b)}）` : ""}</p>
@@ -304,17 +311,16 @@ function editor(){
     <label for="f_doc">做什么（doc）</label><textarea id="f_doc">${esc(b.doc)}</textarea>
     <label for="f_done">判据（一行一条）</label><textarea id="f_done">${esc((b.done_when||[]).join("\n"))}</textarea>
     <div class="row">
-      <div><label for="f_owner">认领人</label><input id="f_owner" list="people" value="${esc(b.owner)}"><datalist id="people">${parts}</datalist></div>
+      <div><label for="f_owner">认领人</label><input id="f_owner" list="people" value="${esc(b.owner)}"></div>
       <div><label for="f_kind">类型</label>${select("f_kind", VIEW.kinds, b.kind)}</div>
     </div>
     <div class="row">
       <div><label for="f_status">状态</label>${select("f_status", VIEW.block_statuses, b.status, zh)}</div>
       <div><label for="f_by">在做（--by）</label><input id="f_by" list="people" value="${esc((b.exec||{}).by||"")}"></div>
     </div>
-    <label for="f_note">说明（改状态的 note；打回时落进 feedback）</label><input id="f_note" value="">
+    <label for="f_note">说明（保存时的 note；打回时落进 feedback）</label><input id="f_note" value="">
     <div class="btns">
-      <button class="btn primary" id="save">保存字段</button>
-      <button class="btn" id="setst">改状态</button>
+      <button class="btn primary" id="save">保存</button>
       <button class="btn ghost" id="rework" title="回到「已认领」，note 落进 feedback">打回重做</button>
     </div>
     <div class="kv">归属 ${esc(t.id)} ${esc(t.title)} · 依赖 ${(b.deps||[]).length ? b.deps.map(esc).join("、") : "—"}
@@ -325,12 +331,28 @@ function editor(){
     ${(b.runs||[]).length ? "<div class='kv'>最近 run：<ul class='runs'>" +
       b.runs.map(r => `<li>${esc((r.at||"").replace("T"," ").slice(0,16))} ${esc(r.by||"")} ${esc(r.from||"")}→${esc(r.to||"")} ${esc(r.note||"")}</li>`).join("") + "</ul></div>" : ""}`;
   const val = (id) => $("#" + id).value;
-  const fields = () => ({ref: b.id, title: val("f_title"), doc: val("f_doc"),
-                         done_when: val("f_done").split("\n").map(s => s.trim()).filter(Boolean),
-                         owner: val("f_owner"), kind: val("f_kind"), by: val("f_by"), note: val("f_note")});
+  // 保存 = 字段 + 状态一次提交。先记住初值，只发**真的变了**的键 —— 没动过的字段不该被这次保存重写或记进日志。
+  const init = {title: b.title || "", doc: b.doc || "",
+                done: (b.done_when || []).join("\n"), owner: b.owner || "",
+                kind: b.kind || "", status: val("f_status"), by: (b.exec || {}).by || ""};
+  const lines = (s) => s.split("\n").map(x => x.trim()).filter(Boolean);
+  const fields = () => {
+    const out = {ref: b.id};
+    if (val("f_title") !== init.title) out.title = val("f_title");
+    if (val("f_doc") !== init.doc) out.doc = val("f_doc");
+    if (lines(val("f_done")).join("\n") !== lines(init.done).join("\n")) out.done_when = lines(val("f_done"));
+    if (val("f_owner") !== init.owner) out.owner = val("f_owner");
+    if (val("f_kind") !== init.kind) out.kind = val("f_kind");
+    if (val("f_status") !== init.status) out.status = val("f_status");
+    if (val("f_by") !== init.by) out.doing = val("f_by");   // doing = --by（谁在做），与 actor（by）分开
+    if (val("f_note")) out.note = val("f_note");
+    return out;
+  };
   $("#save").addEventListener("click", () => api("edit", fields()));
-  $("#setst").addEventListener("click", () => api("status", Object.assign(fields(), {status: val("f_status")})));
-  $("#rework").addEventListener("click", () => api("status", Object.assign(fields(), {status: "claimed"})));
+  // 打回重做是独立语义（note 落 feedback），走 status 接口；owner / 判据沿用旧行为一起发。
+  $("#rework").addEventListener("click", () => api("status", {
+      ref: b.id, status: "claimed", note: val("f_note"), doing: val("f_by"),
+      owner: val("f_owner"), done_when: lines(val("f_done"))}));
 }
 
 // ---------------------------------------------------------------- 新建

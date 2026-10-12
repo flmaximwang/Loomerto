@@ -18,7 +18,7 @@ from pathlib import Path
 
 from . import edits, render, store
 from .model import (BLOCK_STATUS, KINDS, PlanError, all_blocks, block_deps, block_effective,
-                    claim_of, edge_deps, progress, task_status)
+                    claim_of, edge_deps, find, participant_options, progress, task_status)
 
 ASSET = Path(__file__).resolve().parent / "assets" / "canvas.html"
 
@@ -68,6 +68,7 @@ def view_model(plan: dict) -> dict:
             "goal": plan.get("goal", ""), "status": plan.get("status", ""),
             "rev": plan_rev(plan), "progress": [done, tot],
             "participants": plan.get("participants") or [], "tasks": tasks, "edges": edges,
+            "participant_options": participant_options(plan),
             "block_statuses": BLOCK_STATUS, "task_statuses": edits.TASK_STATUS,
             "kinds": KINDS, "file": str(store.plan_path(""))}
 
@@ -138,17 +139,32 @@ class _Handler(BaseHTTPRequestHandler):
         跨泳道移动会换块 id，前端要靠它把选中态跟到新 id 上。
         """
         op = (p.get("op") or "").strip()
-        who = (p.get("by") or "").strip() or "canvas"
+        who = (p.get("by") or "").strip() or "canvas"    # actor = 谁在改（不是「谁在做」）
+        doing = (p.get("doing") or "").strip()           # 「在做（--by）」= 谁在做这件活
         note = p.get("note") or ""
         if op == "edit":
-            _b, changed = edits.edit_block(plan, p["ref"], title=p.get("title"), doc=p.get("doc"),
-                                           done_when=p.get("done_when"), owner=p.get("owner"),
-                                           kind=p.get("kind"), note=note, actor=who)
-            return (f"{p['ref']} 改了 {'、'.join(changed)}" if changed else f"{p['ref']} 没有变化",
-                    p["ref"])
+            # 一次保存 = 字段 + 状态一起提交：字段仍走 `edits.edit_block`、状态仍走 `edits.set_status`
+            # （两边都是唯一实现），成功后才由调用方一次 `commit()`。
+            b, changed = edits.edit_block(plan, p["ref"], title=p.get("title"), doc=p.get("doc"),
+                                          done_when=p.get("done_when"), owner=p.get("owner"),
+                                          kind=p.get("kind"), note=note, actor=who)
+            bits = [f"改了 {'、'.join(changed)}"] if changed else []
+            status = (p.get("status") or "").strip()
+            target = status if status and status != b["status"] else ""
+            # 「在做」变了但状态没变，也要登记（`set_status` 是写 exec.by 的唯一实现）
+            move_doing = bool(doing) and doing != (b.get("exec") or {}).get("by", "")
+            if target or move_doing:
+                _t, old = edits.set_status(plan, p["ref"], target or b["status"],
+                                           by=self._by_for(plan, p["ref"], target or b["status"], doing),
+                                           note=note, actor=who)
+                bits.append(f"{old} → {target}" if target else f"在做 → {doing}")
+            if not bits:
+                return f"{p['ref']} 没有变化", p["ref"]
+            return f"{p['ref']} {'；'.join(bits)}", p["ref"]
         if op == "status":
-            t, old = edits.set_status(plan, p["ref"], p["status"], by=who, note=note,
-                                      owner=p.get("owner") or "",
+            t, old = edits.set_status(plan, p["ref"], p["status"],
+                                      by=self._by_for(plan, p["ref"], p["status"], doing),
+                                      note=note, owner=p.get("owner") or "",
                                       done_when=(p.get("done_when") if p.get("done_when") is not None else None),
                                       actor=who)
             return f"{t['id']} {old} → {p['status']}", t["id"]
@@ -171,6 +187,26 @@ class _Handler(BaseHTTPRequestHandler):
                                          note=note, actor=who)
             return (f"{p['ref']} → {b['id']}（换了泳道，id 与依赖接线已跟着改）", b["id"])
         raise PlanError(f"不认识的 op：{op!r}")
+
+    @staticmethod
+    def _by_for(plan, ref, status, doing) -> str:
+        """「在做（--by）」只在**目标状态收它**时才发 —— 那张表是 `edits.BLOCK_SET_FLAGS` / `TASK_SET_FLAGS`。
+
+        不收还硬塞会撞 `check_set_flags`（退 2）；这里直接回一句人话，让人要么换个收 `--by` 的状态、
+        要么把「在做」清掉。状态本身不合法时（还没进那张表）不发，留给 `set_status` 报它该报的。
+        """
+        if not doing:
+            return ""
+        _task, block = find(plan, ref)
+        table = edits.BLOCK_SET_FLAGS if block is not None else edits.TASK_SET_FLAGS
+        if status not in table:
+            return ""
+        if "--by" not in table[status]:
+            what = "块" if block is not None else "任务"
+            raise PlanError(
+                f"{what}状态 {status} 不收「在做（--by）」（{doing}）—— "
+                f"它收 {'、'.join(sorted(table[status]))}；要么把「在做」清掉，要么换个收 --by 的状态")
+        return doing
 
 
 # ---------------------------------------------------------------- 入口

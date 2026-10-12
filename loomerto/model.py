@@ -368,6 +368,35 @@ def claim_of(obj: dict):
     return "", ""
 
 
+def participant_options(plan: dict) -> list:
+    """参与方候选（画布下拉用）= `participants` ∪ 计划里实际出现的块 `owner` ∪ 实际出现的 `exec.by`。
+
+    为什么要含后两者：真实计划里 owner 未必登记成 participant（实库里 skillweave 那份
+    `participants=["you"]` 却有 44 个块 `owner="default"`）—— 只取 `participants` 的话，
+    **当前认领人自己都选不到**、只能手打。每项 `{id, label, kind, registered}`：
+    `label` 没有就退回 `id`，`registered` 标出「是不是登记在 `participants` 里」，
+    让前端能分清「已注册的参与方」与「只是出现过的人」。顺序稳定：已注册的按
+    `participants` 原序在前，未注册的按 id 排序在后。
+    """
+    opts, seen = [], set()
+    for p in plan.get("participants") or []:
+        pid = (p.get("id") or "").strip()
+        if not pid or pid in seen:
+            continue
+        seen.add(pid)
+        opts.append({"id": pid, "label": (p.get("label") or "").strip() or pid,
+                     "kind": p.get("kind") or "", "registered": True})
+    extra = set()
+    for _t, b in all_blocks(plan):
+        for who in (b.get("owner"), (b.get("exec") or {}).get("by")):
+            who = (who or "").strip()
+            if who and who not in seen:
+                extra.add(who)
+    for pid in sorted(extra):
+        opts.append({"id": pid, "label": pid, "kind": "", "registered": False})
+    return opts
+
+
 # 事件日志（只往 dict 里追加，不管落盘）
 def log_event(plan: dict, kind: str, text: str, actor: str = "agent", **extra):
     e = {"at": now(), "actor": actor, "kind": kind, "text": text}
