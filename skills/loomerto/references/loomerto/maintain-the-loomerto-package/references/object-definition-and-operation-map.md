@@ -4,7 +4,7 @@
 **函数名是主键，行号会随提交漂** —— 引行号前重跑：
 
 ```bash
-cd /Users/maxim/Repositories/Repo/Loomerto
+cd /Users/maxim/Repositories/AgentNative/Loomerto
 grep -n "^def " loomerto/cli.py
 grep -n "^[A-Z_]* = " loomerto/*.py
 ```

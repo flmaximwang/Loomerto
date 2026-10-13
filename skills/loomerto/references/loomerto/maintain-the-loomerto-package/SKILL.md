@@ -17,7 +17,7 @@ metadata:
 
 - 用户说「loomerto 支持这个功能吗」「给一个 cli 入口」「加一个子命令」「这个旗标是干嘛的」——要**改包**或
   按包的现状回答。
-- 要动 `/Users/maxim/Repositories/Repo/Loomerto` 里的 `loomerto/*.py`、`docs/`、`REQUIREMENTS.md`、`skills/`。
+- 要动 `/Users/maxim/Repositories/AgentNative/Loomerto` 里的 `loomerto/*.py`、`docs/`、`REQUIREMENTS.md`、`skills/`。
 - **不属于**：用这个工具去维护一份 plan（改状态 / 派活 / 发提醒 / 看图）→ `loomerto-plan` 那一族
   （族里另有 `loomerto-remind` / `loomerto-check-commands` / `loomerto-check-temps` / `loomerto-intake`）；
   把包仓库当「发 skill 的包」来写 skill 的通用流程 → `author-a-skill-in-a-pack-repo`（本 skill 只补它没有的
@@ -66,9 +66,12 @@ metadata:
 
 ## 改包的固定动作
 
-1. **认门**：`cd /Users/maxim/Repositories/Repo/Loomerto && git status --short` 看有没有别人的在途改动
+1. **认门**：`cd /Users/maxim/Repositories/AgentNative/Loomerto && git status --short` 看有没有别人的在途改动
    （这套仓库常有别的会话在写）；包是 **editable 装**的（`uv tool install --editable <repo>` → 
    `~/.local/bin/{loomerto,plan}`），所以**改完代码立刻生效，不用重装**。
+   **但仓库搬过家就得重装**：receipt（`~/.local/share/uv/tools/loomerto/uv-receipt.toml`）里钉的是**旧绝对路径**，
+   搬完 `loomerto` 报 `ModuleNotFoundError` ⇒ `uv tool install --force --editable <现仓库路径>` 一次即修；
+   别用 `PYTHONPATH` 顶（那只是把坏掉的入口绕过去，receipt 还是坏的）。
 2. **改代码**：按上面第 4 条分层放。新的定位/派生逻辑先想清楚它属于哪一层（路径解析归 `store`，
    图/派生状态归 `model`，只有参数解析与打印归 `cli`）。
 3. **真跑验收**（不许只看 diff）：文件模式与库模式**两条都要跑**，文件模式下**逐条**跑完 **34 个叶子命令**
