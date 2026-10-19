@@ -10,6 +10,10 @@
 > 退役一并清。
 > 变更纪律：需求条目只在**用户明确说了**或**用户拍板**之后才增删；实现状态变了改「现状」列，不新开一份。
 
+> **⚠ v2 已拍板、待实现（2026-10-19）**：统一节点模型 + Electron 桌面画布 —— 设计见
+> [`specs/desktop-canvas.md`](specs/desktop-canvas.md)，工单见 [`specs/desktop-canvas-tickets.md`](specs/desktop-canvas-tickets.md)。
+> 下文描述的仍是 **v1**；与 v2 spec 冲突处以 spec 为准，M1 落地时（工单 M1-11）按 spec 重写本文件。
+
 ## 0. 文档地图（每个细节去哪看）
 
 | 文档 | 承担什么 | 什么时候读 |
@@ -26,6 +30,7 @@
 | [`specs/canvas-participant-picker-and-single-save.md`](specs/canvas-participant-picker-and-single-save.md) | 本轮画布改动的 **spec + ticket 拆分**（T1–T5）：问题、实测证据、user stories、实现决定、测试口径 | 要核对 R-24 这次改动的来龙去脉 |
 | [`docs/architecture.md`](docs/architecture.md) | 拆分后的模块边界、跨 harness 的三条约定、怎么接新前端（画布写回 / web 服务）、改代码前的三道闸 | 要动结构 / 要接别的 harness |
 | [`docs/canvas-sync.md`](docs/canvas-sync.md) | **画布写回协议**（R-02）：`GET/POST /api/plan` 的字段、五个 `op`、`rev` 冲突与幂等、以及**故意不做**的四件事 | 要改画布 / 接第二个前端 |
+| [`specs/desktop-canvas.md`](specs/desktop-canvas.md) · [`-tickets.md`](specs/desktop-canvas-tickets.md) | **v2 设计 + 工单**：统一节点、稳定 id、dep/loop 两种边、空间信息进 json、HTTP v2、Electron 应用、M1–M5 | 要做 v2 / 领工单 |
 
 ## 1. 定位（一句话）
 

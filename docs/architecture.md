@@ -3,6 +3,9 @@
 > 需求见 [`../REQUIREMENTS.md`](../REQUIREMENTS.md)（R-08 / R-11 是这份文件对应的条目）；命令清单见
 > [`cli-reference.md`](cli-reference.md)。这份文件随代码走 —— 改了模块边界或路径规则就改这里。
 
+> **⚠ v2（已拍板、待实现）**：模块边界会按 [`../specs/desktop-canvas.md`](../specs/desktop-canvas.md) 变化
+> （`render.py` → `md.py`、删 `assets/`、`serve.py` 换 HTTP v2、新增 `desktop/`）。本文描述 v1，由工单 M1-11 重写。
+
 ## 1. 一句话
 
 `plan.json` 是唯一真相；**核心层不 print、不 `sys.exit`、不认命令行**，任何 harness
